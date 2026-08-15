@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>67CHRISTER // ADMIN</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js","firebase/auth":"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js","firebase/firestore":"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"}}</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{width:100%;min-height:100vh;background:#000;color:#fff;overflow-x:hidden}
+.grid{position:fixed;inset:0;z-index:-3;background:#000;background-size:60px 60px;background-image:linear-gradient(to right,rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.14) 1px,transparent 1px)}
+canvas{position:fixed;inset:0;z-index:-2}.vignette{position:fixed;inset:0;z-index:-1;background:radial-gradient(100% 100% at 50% 50%,transparent 30%,rgba(0,0,0,.9) 100%);pointer-events:none}
+.page{position:relative;z-index:2;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 12px 80px}
+.box{position:relative;width:92%;max-width:820px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);backdrop-filter:blur(10px);padding:16px;margin-top:18px}
+.box::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border:1px solid #fff;border-right:0;border-bottom:0}
+.head{font-family:'Orbitron';font-size:11px;letter-spacing:3px;margin-bottom:12px;display:flex;justify-content:space-between}
+input,textarea{width:100%;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);padding:10px;color:#fff;font-family:'JetBrains Mono';font-size:11px;margin-top:6px;outline:none}
+.btn{margin-top:10px;padding:10px 18px;border:1px solid #fff;background:#fff;color:#000;font-family:'Orbitron';font-size:10px;letter-spacing:2px;font-weight:900;cursor:pointer}
+.btn-red{background:transparent;color:#fff;border:1px solid rgba(255,80,80,.6)}
+.tab{display:inline-block;padding:8px 14px;border:1px solid rgba(255,255,255,.15);margin-right:6px;font-family:'JetBrains Mono';font-size:9px;letter-spacing:2px;cursor:pointer}.tab.active{background:#fff;color:#000}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:12px}.pcard{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.015);padding:10px}
+.footer{width:92%;max-width:820px;margin-top:40px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:8px;color:rgba(255,255,255,.4)}
+.preview{width:100%;height:140px;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.15);margin-top:8px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.4)}
+</style>
+</head>
+<body>
+<div class="grid"></div><canvas id="c"></canvas><div class="vignette"></div>
+<div class="page">
+  <div id="loginBox" class="box" style="max-width:360px;margin-top:80px">
+    <div class="head"><span>ADMIN_LOGIN</span><span style="opacity:.4"></span></div>
+    <input id="emailInput" placeholder="EMAIL" value="admin@gab.com">
+    <input id="passInput" type="password" placeholder="PASSWORD">
+    <button class="btn" style="width:100%" id="loginBtn">GO TO ADMIN PANEL→</button>
+    <div id="loginMsg" style="color:#ff5a5a;font-size:9px;margin-top:10px;white-space:pre-wrap"></div>
+  </div>
+
+  <div id="adminPanel" style="display:none;width:100%;align-items:center;flex-direction:column">
+    <div class="box" style="display:flex;gap:8px;flex-wrap:wrap">
+      <div class="tab active" data-tab="stats">[STATS]</div>
+      <div class="tab" data-tab="products">[PRODUCTS]</div>
+      <div class="tab" data-tab="reviews">[REVIEWS]</div>
+      <div id="authStatus" style="margin-left:auto;font-size:8px;opacity:.4;display:flex;align-items:center"></div>
+    </div>
+
+    <div id="tab-stats" class="box">
+      <div class="head"><span>EDIT STATS</span><span>LIVE</span></div>
+      <label style="font-size:8px;opacity:.5">PRODUCTS SOLD</label>
+      <input id="s_sold">
+      <label style="font-size:8px;opacity:.5;margin-top:8px;display:block">VERIFIED / TOTAL CUSTOMER</label>
+      <input id="s_cust">
+      <button class="btn" id="saveStatsBtn">SAVE STATS →</button>
+      <div id="statsMsg" style="font-size:9px;margin-top:8px;opacity:.6"></div>
+    </div>
+
+    <div id="tab-products" class="box" style="display:none">
+      <div class="head"><span>ADD PRODUCT / EDIT PRODUCT</span><span></span></div>
+      <input id="p_name" placeholder="NAME e.g SPOTIFY PREMIUM 1Y">
+      <input id="p_desc" placeholder="DESC e.g Individual • Warranty">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input id="p_price" placeholder="PRICE ₱199"><input id="p_old" placeholder="OLD PRICE ₱599"></div>
+      <input id="p_badge" placeholder="BADGE HOT/BEST/NEW">
+      <label style="font-size:8px;opacity:.5;margin-top:10px;display:block">PRODUCT IMAGE (JPG/PNG/WEBP - max 800KB)</label>
+      <input type="file" id="p_file" accept="image/*">
+      <div id="preview" class="preview">NO IMAGE SELECTED</div>
+      <div id="uploadStatus" style="font-size:9px;margin-top:6px;opacity:.6"></div>
+      <button class="btn" id="addProdBtn">+ ADD PRODUCT WITH IMAGE</button>
+      <div class="head" style="margin-top:18px">CURRENT PRODUCTS</div>
+      <div id="prodList" class="prod-grid"></div>
+    </div>
+
+    <div id="tab-reviews" class="box" style="display:none"><div class="head"><span>MANAGE REVIEWS</span></div><div id="reviewList"></div></div>
+
+    <div class="footer"><span>SYSTEM: ONLINE •</span><span style="cursor:pointer;border:1px solid rgba(255,255,255,.2);padding:4px 10px" id="logoutBtn">[ LOGOUT ]</span></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc, updateDoc } from 'firebase/firestore';
+
+const firebaseConfig={apiKey:"AIzaSyD9liDmojMs14xIRjMWNCDbG_soMbrhtEQ",authDomain:"premiumhub-ecc89.firebaseapp.com",projectId:"premiumhub-ecc89",storageBucket:"premiumhub-ecc89.firebasestorage.app",messagingSenderId:"382797072107",appId:"1:382797072107:web:e38700898df1c9d9e8a0ae"};
+const app=initializeApp(firebaseConfig); const auth=getAuth(app); const db=getFirestore(app);
+
+let base64Image="";
+const pFile=document.getElementById('p_file');
+const preview=document.getElementById('preview');
+const uploadStatus=document.getElementById('uploadStatus');
+
+pFile.onchange=(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  if(file.size>900*1024){ alert("Too big! >900KB. Compress at tinypng.com"); return; }
+  const reader=new FileReader();
+  reader.onload=()=>{ base64Image=reader.result; preview.style.backgroundImage=`url(${base64Image})`; preview.innerText=""; uploadStatus.innerText=`Ready - ${Math.round(file.size/1024)}KB`; };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('loginBtn').onclick=async()=>{
+  const email=document.getElementById('emailInput').value.trim();
+  const pass=document.getElementById('passInput').value;
+  document.getElementById('loginMsg').innerText="Connecting...";
+  try{ await signInWithEmailAndPassword(auth,email,pass); document.getElementById('loginMsg').innerText=""; }
+  catch(e){ document.getElementById('loginMsg').innerText=e.code+"\n"+e.message; }
+};
+document.getElementById('logoutBtn').onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,(u)=>{
+  if(u){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('adminPanel').style.display='flex';
+    document.getElementById('authStatus').innerText='VERIFIED: '+u.email;
+    loadAll();
+  }else{
+    document.getElementById('loginBox').style.display='block';
+    document.getElementById('adminPanel').style.display='none';
+  }
+});
+
+document.querySelectorAll('.tab[data-tab]').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('[id^=tab-]').forEach(e=>e.style.display='none');
+    document.getElementById('tab-'+t.dataset.tab).style.display='block';
+    document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+    t.classList.add('active');
+    if(t.dataset.tab==='products') loadProducts();
+    if(t.dataset.tab==='reviews') loadReviews();
+  };
+});
+
+async function loadAll(){
+  const s=await getDoc(doc(db,"stats","main"));
+  if(s.exists()){const d=s.data();document.getElementById('s_sold').value=d.sold||0;document.getElementById('s_cust').value=d.customers||0;}
+  loadProducts();
+}
+document.getElementById('saveStatsBtn').onclick=async()=>{
+  await setDoc(doc(db,"stats","main"),{sold:document.getElementById('s_sold').value,customers:document.getElementById('s_cust').value},{merge:true});
+  document.getElementById('statsMsg').innerText="✅ SAVED";
+};
+
+document.getElementById('addProdBtn').onclick=async()=>{
+  const name=document.getElementById('p_name').value.trim();
+  if(!name) return alert("Name required");
+  if(!base64Image) return alert("Select image first");
+  document.getElementById('uploadStatus').innerText="Saving to Firebase...";
+  await addDoc(collection(db,"products"),{name:name,desc:document.getElementById('p_desc').value,price:document.getElementById('p_price').value,oldPrice:document.getElementById('p_old').value,badge:document.getElementById('p_badge').value,imageUrl:base64Image,createdAt:Date.now()});
+  document.getElementById('uploadStatus').innerText="✅ Added!";
+  alert("Product added! Will show for everyone."); loadProducts();
+  document.getElementById('p_name').value=""; base64Image=""; preview.style.backgroundImage=""; preview.innerText="NO IMAGE SELECTED";
+};
+
+async function loadProducts(){
+  const snap=await getDocs(collection(db,"products"));let h="";
+  snap.forEach(docu=>{
+    const p=docu.data();if(p.dummy)return;
+    h+=`<div class="pcard"><div style="width:100%;height:90px;background:${p.imageUrl?`url(${p.imageUrl}) center/cover`:'rgba(255,255,255,.05)'};border:1px solid rgba(255,255,255,.1);margin-bottom:6px"></div>
+    <div style="font-family:'Orbitron';font-size:10px;margin-bottom:4px">${p.name}</div>
+    <input id="price_${docu.id}" value="${p.price||''}"><input id="old_${docu.id}" value="${p.oldPrice||p.old||''}"><input id="badge_${docu.id}" value="${p.badge||''}">
+    <button class="btn" onclick="window.saveProd('${docu.id}')">SAVE</button> <button class="btn btn-red" onclick="window.delProd('${docu.id}')">DEL</button></div>`;
+  });
+  document.getElementById('prodList').innerHTML=h||"No products";
+}
+window.saveProd=async(id)=>{await updateDoc(doc(db,"products",id),{price:document.getElementById('price_'+id).value,oldPrice:document.getElementById('old_'+id).value,badge:document.getElementById('badge_'+id).value});alert("Updated");};
+window.delProd=async id=>{if(confirm("Delete product?")){await deleteDoc(doc(db,"products",id));loadProducts();}};
+
+async function loadReviews(){const snap=await getDocs(collection(db,"reviews"));let h="";snap.forEach(d=>{const r=d.data();if(r.dummy)return;h+=`<div style="border:1px solid rgba(255,255,255,.08);padding:10px;margin-bottom:8px"><b>${r.username}</b> ${r.stars}★<br><small>${r.text}</small><br><button class="btn btn-red" onclick="window.delRev('${d.id}')">DELETE</button></div>`;});document.getElementById('reviewList').innerHTML=h||"No reviews";}
+window.delRev=async id=>{if(confirm("Delete review?")){await deleteDoc(doc(db,"reviews",id));loadReviews();}};
+
+const canvas=document.getElementById('c');const ctx=canvas.getContext('2d');let w,h,vDrops=[],hDrops=[];
+function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;vDrops=[];hDrops=[];for(let l=1;l<=3;l++)for(let k=0;k<3;k++)vDrops.push({x:l*60,y:-Math.random()*h-k*300,speed:1.8+Math.random()*1.8,length:90,opacity:.9-l*.18});for(let l=1;l<=3;l++)for(let k=0;k<3;k++)hDrops.push({y:l*60,x:-Math.random()*400-k*300,speed:2+Math.random()*2,length:110,opacity:.9-l*.18});}
+addEventListener('resize',resize);resize();
+(function anim(){ctx.clearRect(0,0,w,h);vDrops.forEach(d=>{let g=ctx.createLinearGradient(0,d.y-d.length,0,d.y);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y-d.length);ctx.lineTo(d.x,d.y);ctx.stroke();d.y+=d.speed;if(d.y>h+d.length)d.y=-d.length;});hDrops.forEach(d=>{let g=ctx.createLinearGradient(d.x-d.length,0,d.x,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x-d.length,d.y);ctx.lineTo(d.x,d.y);ctx.stroke();d.x+=d.speed;if(d.x>w+d.length)d.x=-d.length;});requestAnimationFrame(anim)})();
+</script>
+</body>
+</htmlFree
