@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/icon-192.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>GABSTILLEXIST PREMIUM HUB</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script type="importmap">
 {"imports":{"firebase/app":"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js","firebase/firestore":"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"}}
@@ -122,20 +128,4 @@ function startWhy(){if(whyStarted)return;whyStarted=true;typeEffect(document.get
 async function loadStats(){try{const s=await getDoc(doc(db,"stats","main"));if(s.exists()){const d=s.data();document.getElementById('soldVal').innerText=d.sold||"0";document.getElementById('custVal').innerText=d.customers||"0";}}catch(e){}}
 async function loadProducts(){const q=await getDocs(collection(db,"products"));allProducts=[];q.forEach(dc=>{const d=dc.data();if(d.dummy)return;allProducts.push({id:dc.id,...d});});document.getElementById('prodCount').innerText=allProducts.length+" ITEMS";document.getElementById('productsGrid').innerHTML=allProducts.map(p=>`<div class="product-card" onclick="openModal('${p.id}')"><div class="product-badge">${p.badge||'HOT'}</div><div class="product-img" style="${p.imageUrl?`background-image:url('${p.imageUrl}');color:transparent`:''}">${p.imageUrl?'':(p.name||'').substring(0,2).toUpperCase()}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc||''}</div><div><span class="product-price">${p.price}</span><span class="product-old">${p.oldPrice||''}</span></div></div>`).join('');}
 async function loadReviews(){const q=await getDocs(query(collection(db,"reviews"),orderBy("time","desc")));let list=[],total=0,count=0;q.forEach(d=>{const r=d.data();if(r.dummy)return;list.push(r);total+=Number(r.stars||0);count++;});document.getElementById('commentCount').innerText=count+" COMMENTS";if(count>0){document.getElementById('avgRating').innerText=(total/count).toFixed(1)+"★";document.getElementById('ratingSub').innerText="BASED ON "+count+" REVIEWS";}document.getElementById('commentsList').innerHTML=list.map(r=>`<div class="comment-item"><div class="comment-top"><span>${r.username}</span><span>${"★".repeat(r.stars||0)}</span></div><div class="comment-text">${r.text}</div></div>`).join('');}
-window.setUsername=function(){const v=document.getElementById('usernameInput').value.trim();if(!v)return alert("Enter name");currentUser=v;document.getElementById('displayUser').innerText=v;document.getElementById('stepUsername').style.display='none';document.getElementById('stepReview').style.display='block';}
-window.setStars=function(n){currentStars=n;document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('active',i<n);});}
-window.postComment=async function(){const t=document.getElementById('commentInput').value.trim();if(!currentUser||currentStars==0||!t)return alert("Complete all");try{await addDoc(collection(db,"reviews"),{username:currentUser,stars:currentStars,text:t,time:serverTimestamp()});document.getElementById('mainForm').style.display='none';document.getElementById('thanksBox').style.display='block';document.getElementById('thanksUser').innerText=currentUser;loadReviews();}catch(e){alert(e.message);}}
-window.openModal=function(id){const p=allProducts.find(x=>x.id==id);document.getElementById('modalContent').innerHTML=`<div style="width:100%;height:180px;background:${p.imageUrl?`url('${p.imageUrl}') center/cover`:'rgba(255,255,255,.04)'};border:1px solid rgba(255,255,255,.08);margin-bottom:12px"></div><div style="font-family:'Orbitron';font-size:14px;color:#fff;margin-bottom:8px">${p.name}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:rgba(255,255,255,.5);margin-bottom:12px">${p.desc||''}</div><div style="font-family:'Orbitron';font-size:20px;color:#fff">${p.price} <span style="font-size:10px;opacity:.4;text-decoration:line-through">${p.oldPrice||''}</span></div><button class="btn" style="width:100%;margin-top:14px" onclick="window.open('https://www.facebook.com/profile.php?id=61592795527838')">ORDER ON FACEBOOK →</button>`;document.getElementById('prodModal').style.display='flex';}
-window.closeModal=function(){document.getElementById('prodModal').style.display='none';}
-const aboutBoxEl=document.getElementById('aboutBox');const whyBoxEl=document.getElementById('whyBox');
-const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');if(e.target.id==='aboutBox'&&!aboutStarted){aboutStarted=true;typeEffect(document.getElementById('typingAbout'),aboutText,12,()=>{startWhy();});}}});},{threshold:0.25});
-obs.observe(aboutBoxEl);obs.observe(document.getElementById('productsSection'));obs.observe(document.getElementById('reviewSection'));
-const whyObs=new IntersectionObserver((es)=>{es.forEach(en=>{if(en.isIntersecting)whyBoxEl.classList.add('show');});},{threshold:0.2});whyObs.observe(whyBoxEl);
-loadStats();loadProducts();loadReviews();
-const canvas=document.getElementById('c');const ctx=canvas.getContext('2d');let w,h,vDrops=[],hDrops=[];
-function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;vDrops=[];hDrops=[];for(let l=1;l<=3;l++)for(let k=0;k<3;k++)vDrops.push({x:l*60,y:-Math.random()*h-k*300,speed:1.8+Math.random()*1.8,length:90,opacity:.9-l*.18});for(let l=1;l<=3;l++)for(let k=0;k<3;k++)hDrops.push({y:l*60,x:-Math.random()*400-k*300,speed:2+Math.random()*2,length:110,opacity:.9-l*.18});}
-addEventListener('resize',resize);resize();
-(function anim(){ctx.clearRect(0,0,w,h);vDrops.forEach(d=>{let g=ctx.createLinearGradient(0,d.y-d.length,0,d.y);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y-d.length);ctx.lineTo(d.x,d.y);ctx.stroke();d.y+=d.speed;if(d.y>h+d.length)d.y=-d.length;});hDrops.forEach(d=>{let g=ctx.createLinearGradient(d.x-d.length,0,d.x,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x-d.length,d.y);ctx.lineTo(d.x,d.y);ctx.stroke();d.x+=d.speed;if(d.x>w+d.length)d.x=-d.length;});requestAnimationFrame(anim)})();
-</script>
-</body>
-</html>
+window.setUsername=function(){const v=document.getElementById('usernameInput').value.trim();if(!v)return alert("Enter name");currentUser=v;document.getElementById('displayUser').innerText=v;document.getElementById('stepUsername').style.display='none';document.getElementById('stepReview').style.display='bloc
