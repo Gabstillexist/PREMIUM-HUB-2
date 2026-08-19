@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/icon-192.png">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>GABSTILLEXIST PREMIUM HUB</title>
@@ -12,16 +15,16 @@
 *{margin:0;padding:0;box-sizing:border-box}body{width:100%;min-height:100vh;background:#000;overflow-x:hidden}
 .grid{position:fixed;inset:0;z-index:-3;background:#000;background-size:60px 60px;background-image:linear-gradient(to right,rgba(255,255,255,0.14) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.14) 1px,transparent 1px)}
 canvas{position:fixed;inset:0;z-index:-2}.vignette{position:fixed;inset:0;z-index:-1;background:radial-gradient(100% 100% at 50% 50%,transparent 30%,rgba(0,0,0,0.9) 100%);pointer-events:none}
-.page{position:relative;z-index:2;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 60px}
-.top{width:100%;max-width:720px;margin:0 auto;display:flex;flex-direction:column;align-items:center;padding:22px 0 8px}
-.brand-wrap{width:100%;position:relative;padding:22px 20px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.02);backdrop-filter:blur(10px)}
+.page{position:relative;z-index:2;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 60px;box-sizing:border-box}
+.top{width:100%;max-width:720px;margin:0 auto;display:flex;flex-direction:column;align-items:center;padding:22px 0 8px;box-sizing:border-box}
+.brand-wrap{width:100%;position:relative;padding:22px 20px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.02);backdrop-filter:blur(10px);box-sizing:border-box}
 .brand-wrap::before,.brand-wrap::after{content:'';position:absolute;width:12px;height:12px;border:1.5px solid #fff}
 .brand-wrap::before{top:-1px;left:-1px;border-right:0;border-bottom:0}.brand-wrap::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.brand{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.6rem,6.8vw,4.2rem);letter-spacing:0.22em;color:#fff;text-align:center}
+.brand{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.6rem,6.8vw,4.2rem);letter-spacing:0.22em;color:#fff;text-align:center;text-shadow:0 0 22px rgba(255,255,255,0.65);word-break:break-word}
 .meta{display:flex;justify-content:space-between;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.4)}.meta b{color:#fff}
 .sub{font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;font-size:clamp(0.65rem,2.4vw,0.85rem);letter-spacing:0.55em;color:rgba(255,255,255,0.6)}
 .sub::before,.sub::after{content:'';height:1px;width:32px;background:rgba(255,255,255,0.4)}
-.dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:pulse 1.5s infinite}
+.dot{width:6px;height:6px;background:#fff;border-radius:50%;box-shadow:0 0 10px #fff;animation:pulse 1.5s infinite}
 .divider{width:85%;max-width:520px;height:1px;margin:14px 0 8px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.15),transparent)}
 .view-btn{margin-top:14px;padding:10px 28px;border:1px solid #fff;background:#fff;color:#000;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;font-weight:900;cursor:pointer}
 .middle{width:100%;max-width:800px;display:flex;gap:16px;justify-content:center;padding:20px 12px;margin-top:6px}
@@ -33,75 +36,54 @@ canvas{position:fixed;inset:0;z-index:-2}.vignette{position:fixed;inset:0;z-inde
 .stat-sub{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:7px;color:rgba(255,255,255,0.3)}
 .stat-line{margin:12px auto 0;height:1px;width:60%;background:linear-gradient(to right,transparent,rgba(255,255,255,0.3),transparent)}
 .about-wrap{width:100%;max-width:720px;margin-top:80px;display:flex;flex-direction:column;gap:20px}
-.about-box{position:relative;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.02);backdrop-filter:blur(10px);padding:20px;opacity:0;transform:translateY(50px);transition:0.9s}
-.about-box.show{opacity:1;transform:translateY(0)}
+.about-box{position:relative;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.02);backdrop-filter:blur(10px);padding:20px;opacity:0;transform:translateY(50px);pointer-events:none;transition:opacity 0.9s, transform 0.9s}
+.about-box.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.about-box::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border:1px solid #fff;border-right:0;border-bottom:0}
+.about-head{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.about-head span{font-family:'JetBrains Mono';font-size:8px;color:rgba(255,255,255,0.35);letter-spacing:2px}
 .typing{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;color:rgba(255,255,255,0.78);white-space:pre-wrap}
-#typingAbout{height:290px;overflow:hidden}#typingWhy{height:330px;overflow:hidden}
+#typingAbout{height:290px;min-height:290px;max-height:290px;overflow:hidden}
+#typingWhy{height:330px;min-height:330px;max-height:330px;overflow:hidden}
 .cursor{display:inline-block;width:8px;height:13px;background:#fff;margin-left:3px;animation:blink 0.8s infinite;vertical-align:middle}
-.why-cards-wrap{width:100%;max-width:720px;margin-top:20px;display:flex;flex-direction:column;gap:14px;opacity:0;transform:translateY(20px);transition:0.6s}
+.why-cards-wrap{width:100%;max-width:720px;margin-top:20px;display:flex;flex-direction:column;gap:14px;opacity:0;transform:translateY(20px);transition:opacity 0.6s}
 .why-cards-wrap.show{opacity:1;transform:translateY(0)}
-.why-card{position:relative;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.03);backdrop-filter:blur(10px);padding:20px 18px;opacity:0;transform:translateY(30px);transition:0.6s}
+.why-card{position:relative;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.03);backdrop-filter:blur(10px);padding:20px 18px;opacity:0;transform:translateY(30px);transition:opacity 0.6s ease, transform 0.6s ease}
 .why-card.show{opacity:1;transform:translateY(0)}
 .why-card b{font-family:'Orbitron';font-size:11px;letter-spacing:2px;color:#fff;display:block;margin-bottom:8px}
 .why-card p{font-family:'JetBrains Mono';font-size:9px;color:rgba(255,255,255,0.45);line-height:1.6}
-.products-wrap{width:100%;max-width:820px;margin-top:40px;opacity:0;transform:translateY(40px);transition:0.9s}
+.products-wrap{width:100%;max-width:820px;margin-top:40px;opacity:0;transform:translateY(40px);transition:opacity 0.9s, transform 0.9s}
 .products-wrap.show{opacity:1;transform:translateY(0)}
-.prod-head{display:flex;justify-content:space-between;margin-bottom:14px}
-.prod-title{font-family:'Orbitron';font-size:13px;letter-spacing:3px;color:#fff}
+.prod-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.prod-title{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:3px;color:#fff}
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .product-card{position:relative;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);padding:10px;cursor:pointer}
 .product-img{width:100%;height:110px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-size:24px;color:rgba(255,255,255,0.3);margin-bottom:10px;background-size:cover;background-position:center}
 .product-badge{position:absolute;top:14px;right:14px;font-family:'JetBrains Mono';font-size:6px;padding:3px 6px;background:#fff;color:#000;z-index:2}
-.product-name{font-family:'JetBrains Mono';font-size:10px;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.product-desc{font-family:'JetBrains Mono';font-size:7px;color:rgba(255,255,255,0.35);margin-bottom:8px}
-.product-price{font-family:'Orbitron';font-size:13px;color:#fff}
+.product-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-desc{font-family:'JetBrains Mono',monospace;font-size:7px;color:rgba(255,255,255,0.35);margin-bottom:8px}
+.product-price{font-family:'Orbitron',sans-serif;font-size:13px;color:#fff}
 .product-old{font-family:'JetBrains Mono';font-size:7px;color:rgba(255,255,255,0.25);text-decoration:line-through;margin-left:6px}
-.review-wrap{width:100%;max-width:540px;margin-top:32px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.02);backdrop-filter:blur(12px);padding:16px;position:relative;opacity:0;transform:translateY(40px);transition:0.9s}
+.review-wrap{width:100%;max-width:540px;margin-top:32px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.02);backdrop-filter:blur(12px);padding:16px;position:relative;opacity:0;transform:translateY(40px);transition:opacity 0.9s, transform 0.9s}
 .review-wrap.show{opacity:1;transform:translateY(0)}
 .review-wrap::before,.review-wrap::after{content:'';position:absolute;width:10px;height:10px;border:1px solid #fff}
 .review-wrap::before{top:-1px;left:-1px;border-right:0;border-bottom:0}.review-wrap::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.review-head{font-family:'Orbitron';font-size:11px;letter-spacing:2px;color:#fff;display:flex;justify-content:space-between;margin-bottom:14px}
-.input{width:100%;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;color:#fff;font-family:'JetBrains Mono';font-size:11px;outline:none}
-.btn{background:#fff;color:#000;border:0;padding:10px 16px;font-family:'JetBrains Mono';font-size:10px;letter-spacing:2px;cursor:pointer;font-weight:700}
-.stars{display:flex;gap:6px;margin:10px 0}.star{font-size:22px;color:rgba(255,255,255,0.2);cursor:pointer}.star.active{color:#fff}
-.comment-area{width:100%;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);padding:10px;color:#fff;font-family:'JetBrains Mono';font-size:11px;min-height:70px;resize:none;outline:none;margin-top:8px}
+.review-head{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:#fff;display:flex;justify-content:space-between;margin-bottom:14px}
+.input{width:100%;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);padding:10px 12px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;outline:none}
+.btn{background:#fff;color:#000;border:0;padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;font-weight:700}
+.stars{display:flex;gap:6px;margin:10px 0}.star{font-size:22px;color:rgba(255,255,255,0.2);cursor:pointer}.star.active{color:#fff;text-shadow:0 0 10px #fff}
+.comment-area{width:100%;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);padding:10px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;min-height:70px;resize:none;outline:none;margin-top:8px}
 .comments-list{margin-top:16px;display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto}
 .comment-item{border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);padding:10px 12px}
-.comment-top{display:flex;justify-content:space-between;font-family:'JetBrains Mono';font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px}
-.comment-text{font-family:'JetBrains Mono';font-size:11px;color:#fff;line-height:1.4}
+.comment-top{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:6px}
+.comment-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:#fff;line-height:1.4}
 .thanks-box{text-align:center;padding:30px 10px;border:1px dashed rgba(255,255,255,0.2);background:rgba(255,255,255,0.03)}
-.thanks-title{font-family:'Orbitron';font-size:18px;color:#fff;letter-spacing:2px;margin-bottom:10px}
-.footer{
-  width:100%;
-  max-width:720px;
-  height:155px;
-  margin-top:60px;
-  padding:20px 16px;
-  border:1px solid rgba(255,255,255,0.12);
-  background:rgba(255,255,255,0.02);
-  backdrop-filter:blur(10px);
-  text-align:center;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-.corner{position:absolute;width:14px;height:14px;border:2px solid #fff}
-.corner-tl{top:-1px;left:-1px;border-right:0;border-bottom:0}
-.corner-tr{top:-1px;right:-1px;border-left:0;border-bottom:0}
-.corner-bl{bottom:-1px;left:-1px;border-right:0;border-top:0}
-.corner-br{bottom:-1px;right:-1px;border-left:0;border-top:0}
-.footer-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.3),transparent);margin-bottom:12px}
-.footer-text{font-family:'Orbitron';font-size:8px;letter-spacing:1.2px;color:#fff;line-height:1.6;height:32px;display:flex;flex-direction:column;justify-content:center;align-items:center}
-#nameTyping{display:inline-block;width:170px;height:14px;text-align:center;overflow:hidden;white-space:nowrap}
-.footer-details{margin-top:8px;height:28px;display:flex;flex-direction:column;gap:2px;justify-content:center;font-family:'JetBrains Mono';font-size:6px;color:rgba(255,255,255,0.35)}
-.footer-sub{margin-top:8px;font-family:'JetBrains Mono';font-size:5.5px;color:rgba(255,255,255,0.25)}
+.thanks-title{font-family:'Orbitron',sans-serif;font-size:18px;color:#fff;letter-spacing:2px;margin-bottom:10px}
+.thanks-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:2px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-box{width:100%;max-width:360px;border:1px solid rgba(255,255,255,0.15);background:#0a0a0a;padding:16px;position:relative}
 .modal-close{position:absolute;top:8px;right:10px;font-family:'JetBrains Mono';color:rgba(255,255,255,0.5);cursor:pointer}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
-@media(max-width:768px){.middle{flex-direction:column;align-items:center}.stat-box{width:85%;max-width:320px}.products-grid{grid-template-columns:repeat(2,1fr)}#typingAbout{height:410px}#typingWhy{height:470px}.footer{max-width:92%;width:92%;height:160px}}
+@media(max-width:768px){.middle{flex-direction:column;align-items:center;gap:12px}.stat-box{width:85%;max-width:320px}.products-grid{grid-template-columns:repeat(2,1fr)}#typingAbout{height:410px;min-height:410px;max-height:410px}#typingWhy{height:470px;min-height:470px;max-height:470px}.why-cards-wrap{margin-top:16px;gap:12px}}
 </style>
 </head>
 <body>
@@ -109,84 +91,64 @@ canvas{position:fixed;inset:0;z-index:-2}.vignette{position:fixed;inset:0;z-inde
 <div class="page">
 <div class="top"><div class="brand-wrap"><div class="meta"><span>[ <b>SYSTEM</b> : ONLINE ]</span><span>VER 1.0.0</span></div><div class="brand">GABSTILLEXIST</div><div class="sub"><div class="dot"></div> PREMIUM HUB <div class="dot"></div></div></div><div class="divider"></div><button class="view-btn" onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">VIEW PRODUCTS →</button></div>
 <div class="middle"><div class="stat-box"><div class="stat-label">PRODUCTS SOLD</div><div class="stat-value" id="soldVal">0</div><div class="stat-line"></div><div class="stat-sub">TOTAL PRODUCTS SOLD</div></div><div class="stat-box"><div class="stat-label">TOTAL CUSTOMER</div><div class="stat-value" id="custVal">0</div><div class="stat-line"></div><div class="stat-sub">TOTAL VERIFIED CUSTOMERS</div></div><div class="stat-box"><div class="stat-label">REVIEWS RECEIVED</div><div class="stat-value" id="avgRating">0★</div><div class="stat-line"></div><div class="stat-sub" id="ratingSub">BASED ON 0 REVIEWS</div></div></div>
-<div class="about-wrap"><div class="about-box" id="aboutBox"><div class="typing" id="typingAbout"></div></div><div class="about-box" id="whyBox"><div class="typing" id="typingWhy"></div></div></div>
-<div class="why-cards-wrap" id="whyCardsWrap"><div class="why-card"><b>⚡ INSTANT DELIVERY</b><p>Auto-delivery system after payment.</p></div><div class="why-card"><b>🛡️ WARRANTY</b><p>We replace immediately.</p></div><div class="why-card"><b>💬 24/7 SUPPORT</b><p>Real human support.</p></div><div class="why-card"><b>🔒 LEGIT</b><p>Private and premium only.</p></div></div>
+<div class="about-wrap"><div class="about-box" id="aboutBox"><div class="about-head">ABOUT US <span>[ WHOAMI ]</span></div><div class="typing" id="typingAbout"></div></div><div class="about-box" id="whyBox"><div class="about-head">WHY CHOOSE US? <span>[ REASON.EXE ]</span></div><div class="typing" id="typingWhy"></div></div></div>
+<div class="why-cards-wrap" id="whyCardsWrap"><div class="why-card"><b>⚡ INSTANT DELIVERY</b><p>Auto-delivery system after payment confirmation. No waiting time. System online 24/7, even at 3AM.</p></div><div class="why-card"><b>🛡️ WARRANTY GUARANTEED</b><p>All accounts come with warranty. If it has issue, we replace it immediately. No questions asked.</p></div><div class="why-card"><b>💬 24/7 REAL SUPPORT</b><p>Not bots. Real human support on Telegram & Discord. Fast response within minutes.</p></div><div class="why-card"><b>🔒 100% LEGIT & SECURE</b><p>No cracked, no stolen, no shared. Private and premium accounts only. Trusted since 2023.</p></div></div>
 <div class="products-wrap" id="productsSection"><div class="prod-head"><div class="prod-title">VIEW PRODUCTS</div><div class="prod-count" id="prodCount">0 ITEMS</div></div><div class="products-grid" id="productsGrid"></div></div>
-<div class="review-wrap" id="reviewSection"><div class="review-head"><span>GIVE US A REVIEW!</span><span id="commentCount">0 COMMENTS</span></div><div id="mainForm"><div id="stepUsername"><div style="display:flex;gap:8px"><input id="usernameInput" class="input" placeholder="YOUR NAME..." /><button class="btn" onclick="setUsername()">NEXT</button></div></div><div id="stepReview" style="display:none"><div class="stars"><span class="star" onclick="setStars(1)">★</span><span class="star" onclick="setStars(2)">★</span><span class="star" onclick="setStars(3)">★</span><span class="star" onclick="setStars(4)">★</span><span class="star" onclick="setStars(5)">★</span></div><textarea id="commentInput" class="comment-area"></textarea><button class="btn" style="width:100%;margin-top:10px" onclick="postComment()">POST REVIEW →</button></div></div><div id="thanksBox" style="display:none" class="thanks-box"><div class="thanks-title">THANK YOU!</div></div><div class="comments-list" id="commentsList"></div></div>
-
-<footer class="footer">
-  <div class="corner corner-tl"></div>
-  <div class="corner corner-tr"></div>
-  <div class="corner corner-bl"></div>
-  <div class="corner corner-br"></div>
-  <div class="footer-line"></div>
-  <div class="footer-text">
-    <span>© 2023-2026 ALL RIGHTS RESERVED</span>
-    <span id="nameTyping"></span>
-  </div>
-  <div class="footer-details">
-    <span>BUILT WITH TRUST • LEGIT ACCOUNTS • 24/7 SUPPORT</span>
-    <span>FB.COM/GABSTILLEXIST • TG: @GABSTILLEXIST</span>
-  </div>
-  <div class="footer-sub">[ SYSTEM : ONLINE ] • VER 1.0.0</div>
-</footer>
-
+<div class="review-wrap" id="reviewSection"><div class="review-head"><span>GIVE US A REVIEW!</span><span id="commentCount">0 COMMENTS</span></div><div id="mainForm"><div id="stepUsername"><div style="font-family:'Orbitron';font-size:10px;letter-spacing:2px;margin-bottom:8px;color:#fff">LOVE OUR SHOP? LEAVE A FEEDBACK!</div><div style="font-family:'JetBrains Mono';font-size:8px;color:rgba(255,255,255,0.4);margin-bottom:8px">WHAT SHOULD WE CALL YOU?</div><div style="display:flex;gap:8px"><input id="usernameInput" class="input" placeholder="YOUR NAME..." /><button class="btn" onclick="setUsername()">NEXT</button></div></div><div id="stepReview" style="display:none"><div style="font-family:'JetBrains Mono';font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:4px">HEY <span id="displayUser" style="color:#fff"></span>! 👋</div><div style="font-family:'JetBrains Mono';font-size:8px;color:rgba(255,255,255,0.4);margin-top:10px">HOW MANY STARS WOULD YOU GIVE US?</div><div class="stars" id="starBox"><span class="star" onclick="setStars(1)">★</span><span class="star" onclick="setStars(2)">★</span><span class="star" onclick="setStars(3)">★</span><span class="star" onclick="setStars(4)">★</span><span class="star" onclick="setStars(5)">★</span></div><div style="font-family:'JetBrains Mono';font-size:8px;color:rgba(255,255,255,0.4)">TELL US ABOUT YOUR EXPERIENCE</div><textarea id="commentInput" class="comment-area" placeholder="I love the instant delivery..."></textarea><button class="btn" style="width:100%;margin-top:10px" onclick="postComment()">POST REVIEW →</button></div></div><div id="thanksBox" style="display:none" class="thanks-box"><div class="thanks-title">THANK YOU!</div><div class="thanks-sub">Thanks for supporting <span id="thanksUser" style="color:#fff"></span>! 💜</div></div><div class="comments-list" id="commentsList"></div></div>
 </div>
 <div class="modal" id="prodModal" onclick="if(event.target==this)closeModal()"><div class="modal-box"><div class="modal-close" onclick="closeModal()">[X]</div><div id="modalContent"></div></div></div>
-
 <script type="module">
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, doc, getDoc, addDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 const firebaseConfig = {apiKey:"AIzaSyD9liDmojMs14xIRjMWNCDbG_soMbrhtEQ",authDomain:"premiumhub-ecc89.firebaseapp.com",projectId:"premiumhub-ecc89",storageBucket:"premiumhub-ecc89.firebasestorage.app",messagingSenderId:"382797072107",appId:"1:382797072107:web:e38700898df1c9d9e8a0ae"};
 const app=initializeApp(firebaseConfig); const db=getFirestore(app);
-const aboutText=`I am GABSTILLEXIST.\n\nI started GABSTILLEXIST PREMIUM HUB back in 2023 with a simple mission to make premium accounts accessible at a student-friendly price.`;
-const whyText=`We are different from other shops because we actually care about quality.\n\nAt GABSTILLEXIST, every product is private, legit, and comes with a full warranty.`;
-let currentUser="",currentStars=0,allProducts=[],aboutStarted=false,whyStarted=false;
-function typeEffect(el,text,speed){let i=0;el.innerHTML="";function step(){if(i<text.length){el.innerHTML=text.substring(0,i+1)+'<span class="cursor"></span>';i++;setTimeout(step,speed);}else{el.innerHTML=text;}}step();}
+const aboutText=`I am GABSTILLEXIST.\n\nI started GABSTILLEXIST PREMIUM HUB back in 2023 with a simple mission to make premium accounts and digital tools accessible to everyone at a student-friendly price.
+
+I started this because I understand how expensive subscriptions can be, especially for students. That’s why I wanted to provide legit, private, and warranty covered accounts without the heavy price tag.
+
+From Spotify, Netflix, YouTube Premium, to Canva Pro, Disney+, and more, we have served hundreds of satisfied customers with instant delivery and real human support.
+
+This is not just a shop. It’s a community built on trust, affordability, and premium quality. Welcome to GABSTILLEXIST PREMIUM HUB.`;
+const whyText=`We are different from other shops because we actually care about the quality of what we provide.
+
+Most shops sell cracked, shared, or stolen accounts that stop working after a few days. We don’t do that.
+
+At GABSTILLEXIST, every product is private, legit, and comes with a full warranty. If your account encounters any issue, we’ll replace it at no extra charge.
+
+Why choose us? Because we deliver instantly, even at 3 AM. Because we reply fast with real human support, not bots. Because our prices are affordable while the quality stays premium. And because hundreds of customers have trusted us since 2023 and continue to come back.
+
+Affordable prices, premium quality, and trusted service.`;
+let currentUser="",currentStars=0,allProducts=[];
+let aboutStarted=false,whyStarted=false;
+function typeEffect(el,text,speed,cb){let i=0;el.innerHTML="";function step(){if(i<text.length){el.innerHTML=text.substring(0,i+1)+'<span class="cursor"></span>';i++;setTimeout(step,speed);}else{el.innerHTML=text;if(cb)cb();}}step();}
 async function loadStats(){try{const s=await getDoc(doc(db,"stats","main"));if(s.exists()){const d=s.data();document.getElementById('soldVal').innerText=d.sold||"0";document.getElementById('custVal').innerText=d.customers||"0";}}catch(e){}}
 async function loadProducts(){const q=await getDocs(collection(db,"products"));allProducts=[];q.forEach(dc=>{const d=dc.data();if(d.dummy)return;allProducts.push({id:dc.id,...d});});document.getElementById('prodCount').innerText=allProducts.length+" ITEMS";document.getElementById('productsGrid').innerHTML=allProducts.map(p=>`<div class="product-card" onclick="openModal('${p.id}')"><div class="product-badge">${p.badge||'HOT'}</div><div class="product-img" style="${p.imageUrl?`background-image:url('${p.imageUrl}');color:transparent`:''}">${p.imageUrl?'':(p.name||'').substring(0,2).toUpperCase()}</div><div class="product-name">${p.name}</div><div class="product-desc">${p.desc||''}</div><div><span class="product-price">${p.price}</span><span class="product-old">${p.oldPrice||''}</span></div></div>`).join('');}
 async function loadReviews(){const q=await getDocs(query(collection(db,"reviews"),orderBy("time","desc")));let list=[],total=0,count=0;q.forEach(d=>{const r=d.data();if(r.dummy)return;list.push(r);total+=Number(r.stars||0);count++;});document.getElementById('commentCount').innerText=count+" COMMENTS";if(count>0){document.getElementById('avgRating').innerText=(total/count).toFixed(1)+"★";document.getElementById('ratingSub').innerText="BASED ON "+count+" REVIEWS";}document.getElementById('commentsList').innerHTML=list.map(r=>`<div class="comment-item"><div class="comment-top"><span>${r.username}</span><span>${"★".repeat(r.stars||0)}</span></div><div class="comment-text">${r.text}</div></div>`).join('');}
-window.setUsername=function(){const v=document.getElementById('usernameInput').value.trim();if(!v)return alert("Enter name");currentUser=v;document.getElementById('stepUsername').style.display='none';document.getElementById('stepReview').style.display='block';}
+window.setUsername=function(){const v=document.getElementById('usernameInput').value.trim();if(!v)return alert("Enter name");currentUser=v;document.getElementById('displayUser').innerText=v;document.getElementById('stepUsername').style.display='none';document.getElementById('stepReview').style.display='block';}
 window.setStars=function(n){currentStars=n;document.querySelectorAll('.star').forEach((s,i)=>{s.classList.toggle('active',i<n);});}
-window.postComment=async function(){const t=document.getElementById('commentInput').value.trim();if(!currentUser||currentStars==0||!t)return alert("Complete all");try{await addDoc(collection(db,"reviews"),{username:currentUser,stars:currentStars,text:t,time:serverTimestamp()});document.getElementById('mainForm').style.display='none';document.getElementById('thanksBox').style.display='block';loadReviews();}catch(e){alert(e.message);}}
-window.openModal=function(id){const p=allProducts.find(x=>x.id==id);document.getElementById('modalContent').innerHTML=`<div style="width:100%;height:180px;background:${p.imageUrl?`url('${p.imageUrl}') center/cover`:'rgba(255,255,255,.04)'}"></div><div style="font-family:'Orbitron';font-size:14px;color:#fff;margin-top:10px">${p.name}</div><div style="font-family:'Orbitron';font-size:20px;color:#fff;margin-top:10px">${p.price}</div><button class="btn" style="width:100%;margin-top:14px">ORDER ON FACEBOOK →</button>`;document.getElementById('prodModal').style.display='flex';}
+window.postComment=async function(){const t=document.getElementById('commentInput').value.trim();if(!currentUser||currentStars==0||!t)return alert("Complete all");try{await addDoc(collection(db,"reviews"),{username:currentUser,stars:currentStars,text:t,time:serverTimestamp()});document.getElementById('mainForm').style.display='none';document.getElementById('thanksBox').style.display='block';document.getElementById('thanksUser').innerText=currentUser;loadReviews();}catch(e){alert(e.message);}}
+window.openModal=function(id){const p=allProducts.find(x=>x.id==id);document.getElementById('modalContent').innerHTML=`<div style="width:100%;height:180px;background:${p.imageUrl?`url('${p.imageUrl}') center/cover`:'rgba(255,255,255,.04)'};border:1px solid rgba(255,255,255,.08);margin-bottom:12px"></div><div style="font-family:'Orbitron';font-size:14px;color:#fff;margin-bottom:8px">${p.name}</div><div style="font-family:'JetBrains Mono';font-size:10px;color:rgba(255,255,255,.5);margin-bottom:12px">${p.desc||''}</div><div style="font-family:'Orbitron';font-size:20px;color:#fff">${p.price} <span style="font-size:10px;opacity:.4;text-decoration:line-through">${p.oldPrice||''}</span></div><button class="btn" style="width:100%;margin-top:14px" onclick="window.open('https://www.facebook.com/profile.php?id=61592795527838')">ORDER ON FACEBOOK →</button>`;document.getElementById('prodModal').style.display='flex';}
 window.closeModal=function(){document.getElementById('prodModal').style.display='none';}
-const aboutBoxEl=document.getElementById('aboutBox');const whyBoxEl=document.getElementById('whyBox');const whyCardsWrap=document.getElementById('whyCardsWrap');const whyCards=document.querySelectorAll('.why-card');
+const aboutBoxEl=document.getElementById('aboutBox');
+const whyBoxEl=document.getElementById('whyBox');
+const whyCardsWrap=document.getElementById('whyCardsWrap');
+const whyCards=document.querySelectorAll('.why-card');
 const aboutObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting &&!aboutStarted){aboutStarted=true;e.target.classList.add('show');typeEffect(document.getElementById('typingAbout'),aboutText,12);}});},{threshold:0.25});
 const whyObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting &&!whyStarted){whyStarted=true;e.target.classList.add('show');typeEffect(document.getElementById('typingWhy'),whyText,12);}});},{threshold:0.25});
-aboutObs.observe(aboutBoxEl);whyObs.observe(whyBoxEl);
 const wrapObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });},{threshold:0.1});
-const cardObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('show');});},{threshold:0.35});
-wrapObs.observe(whyCardsWrap);whyCards.forEach(c=>cardObs.observe(c));
+const cardObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('show');});},{threshold:0.35, rootMargin:"0px 0px -30px 0px"});
+aboutObs.observe(aboutBoxEl);
+whyObs.observe(whyBoxEl);
+wrapObs.observe(whyCardsWrap);
+whyCards.forEach(c=>cardObs.observe(c));
 const otherObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show');});},{threshold:0.2});
-otherObs.observe(document.getElementById('productsSection'));otherObs.observe(document.getElementById('reviewSection'));
+otherObs.observe(document.getElementById('productsSection'));
+otherObs.observe(document.getElementById('reviewSection'));
 loadStats();loadProducts();loadReviews();
 const canvas=document.getElementById('c');const ctx=canvas.getContext('2d');let w,h,vDrops=[],hDrops=[];
 function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;vDrops=[];hDrops=[];for(let l=1;l<=3;l++)for(let k=0;k<3;k++)vDrops.push({x:l*60,y:-Math.random()*h-k*300,speed:1.8+Math.random()*1.8,length:90,opacity:.9-l*.18});for(let l=1;l<=3;l++)for(let k=0;k<3;k++)hDrops.push({y:l*60,x:-Math.random()*400-k*300,speed:2+Math.random()*2,length:110,opacity:.9-l*.18});}
 addEventListener('resize',resize);resize();
 (function anim(){ctx.clearRect(0,0,w,h);vDrops.forEach(d=>{let g=ctx.createLinearGradient(0,d.y-d.length,0,d.y);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y-d.length);ctx.lineTo(d.x,d.y);ctx.stroke();d.y+=d.speed;if(d.y>h+d.length)d.y=-d.length;});hDrops.forEach(d=>{let g=ctx.createLinearGradient(d.x-d.length,0,d.x,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x-d.length,d.y);ctx.lineTo(d.x,d.y);ctx.stroke();d.x+=d.speed;if(d.x>w+d.length)d.x=-d.length;});requestAnimationFrame(anim)})();
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('nameTyping');
-  if(!el) return;
-  const text = "@GABSTILLEXIST";
-  let i = 0, del = false;
-  function loop(){
-    if(!del){
-      el.textContent = text.slice(0, i+1);
-      i++;
-      if(i === text.length){ setTimeout(()=>{del=true;loop();},2000); return; }
-      setTimeout(loop,120);
-    }else{
-      el.textContent = text.slice(0, i-1);
-      i--;
-      if(i<=0){ del=false; i=0; setTimeout(loop,500); return; }
-      setTimeout(loop,60);
-    }
-  }
-  loop();
-});
 </script>
 </body>
 </html>
