@@ -155,4 +155,38 @@ const aboutBoxEl=document.getElementById('aboutBox');const whyBoxEl=document.get
 const aboutObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting &&!aboutStarted){aboutStarted=true;e.target.classList.add('show');typeEffect(document.getElementById('typingAbout'),aboutText,12);}});},{threshold:0.25});
 const whyObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting &&!whyStarted){whyStarted=true;e.target.classList.add('show');typeEffect(document.getElementById('typingWhy'),whyText,12);}});},{threshold:0.25});
 aboutObs.observe(aboutBoxEl);whyObs.observe(whyBoxEl);
-const wrapObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{ if(e.isIntersecting) e.target.classList
+const wrapObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });},{threshold:0.1});
+const cardObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('show');});},{threshold:0.35});
+wrapObs.observe(whyCardsWrap);whyCards.forEach(c=>cardObs.observe(c));
+const otherObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show');});},{threshold:0.2});
+otherObs.observe(document.getElementById('productsSection'));otherObs.observe(document.getElementById('reviewSection'));
+loadStats();loadProducts();loadReviews();
+const canvas=document.getElementById('c');const ctx=canvas.getContext('2d');let w,h,vDrops=[],hDrops=[];
+function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;vDrops=[];hDrops=[];for(let l=1;l<=3;l++)for(let k=0;k<3;k++)vDrops.push({x:l*60,y:-Math.random()*h-k*300,speed:1.8+Math.random()*1.8,length:90,opacity:.9-l*.18});for(let l=1;l<=3;l++)for(let k=0;k<3;k++)hDrops.push({y:l*60,x:-Math.random()*400-k*300,speed:2+Math.random()*2,length:110,opacity:.9-l*.18});}
+addEventListener('resize',resize);resize();
+(function anim(){ctx.clearRect(0,0,w,h);vDrops.forEach(d=>{let g=ctx.createLinearGradient(0,d.y-d.length,0,d.y);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y-d.length);ctx.lineTo(d.x,d.y);ctx.stroke();d.y+=d.speed;if(d.y>h+d.length)d.y=-d.length;});hDrops.forEach(d=>{let g=ctx.createLinearGradient(d.x-d.length,0,d.x,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,`rgba(255,255,255,${d.opacity})`);ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x-d.length,d.y);ctx.lineTo(d.x,d.y);ctx.stroke();d.x+=d.speed;if(d.x>w+d.length)d.x=-d.length;});requestAnimationFrame(anim)})();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('nameTyping');
+  if(!el) return;
+  const text = "@GABSTILLEXIST";
+  let i = 0, del = false;
+  function loop(){
+    if(!del){
+      el.textContent = text.slice(0, i+1);
+      i++;
+      if(i === text.length){ setTimeout(()=>{del=true;loop();},2000); return; }
+      setTimeout(loop,120);
+    }else{
+      el.textContent = text.slice(0, i-1);
+      i--;
+      if(i<=0){ del=false; i=0; setTimeout(loop,500); return; }
+      setTimeout(loop,60);
+    }
+  }
+  loop();
+});
+</script>
+</body>
+</html>
