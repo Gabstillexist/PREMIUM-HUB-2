@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ORDER VERIFICATION</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#000;color:#fff;overflow-x:hidden;font-family:'JetBrains Mono',monospace}
+.grid{position:fixed;inset:0;z-index:-3;background:#000;background-size:60px 60px;background-image:linear-gradient(to right,rgba(255,255,255,0.14) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.14) 1px,transparent 1px)}
+canvas{position:fixed;inset:0;z-index:-2}
+.vignette{position:fixed;inset:0;z-index:-1;background:radial-gradient(100% 100% at 50% 50%,transparent 30%,rgba(0,0,0,0.9) 100%);pointer-events:none}
+.page{position:relative;z-index:2;width:100%;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 16px}
+.title{font-family:'Orbitron';font-weight:900;font-size:clamp(18px,5vw,26px);letter-spacing:5px;margin-bottom:18px;text-align:center;text-shadow:0 0 20px rgba(255,255,255,.6)}
+.form-wrap{width:92%;max-width:480px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.02);backdrop-filter:blur(12px);padding:20px;position:relative}
+.form-wrap::before,.form-wrap::after{content:'';position:absolute;width:12px;height:12px;border:1.5px solid #fff}
+.form-wrap::before{top:-1px;left:-1px;border-right:0;border-bottom:0}.form-wrap::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.label{font-size:8px;letter-spacing:2px;color:rgba(255,255,255,.5);margin:14px 0 6px;display:block}
+.input{width:100%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);padding:12px;color:#fff;font-family:'JetBrains Mono';font-size:11px;outline:none;cursor:pointer}
+.btn{margin-top:22px;width:100%;background:#fff;color:#000;border:0;padding:12px;font-family:'Orbitron';font-size:11px;letter-spacing:3px;font-weight:900;cursor:pointer}
+.note{margin-top:14px;font-size:7px;line-height:1.6;text-align:center;color:rgba(255,255,255,.55);border:1px dashed rgba(255,255,255,.15);padding:9px;letter-spacing:1px}
+.success{display:none;text-align:center;padding:30px 10px;border:1px dashed rgba(255,255,255,.2);background:rgba(255,255,255,.03);margin-top:16px}
+.success b{font-family:'Orbitron';font-size:16px;letter-spacing:2px}
+.picker-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.picker-box{width:100%;max-width:500px;background:#0a0a0a;border:1px solid rgba(255,255,255,.15);border-bottom:0;max-height:70vh;display:flex;flex-direction:column;animation:slideUp.25s ease}
+.picker-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1);font-family:'Orbitron';font-size:10px;letter-spacing:2px}
+.picker-list{overflow-y:auto;padding:8px}
+.picker-item{padding:14px 12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);margin-bottom:8px;font-size:11px;cursor:pointer;display:flex;justify-content:space-between}
+.picker-item:active,.picker-item:hover{background:rgba(255,255,255,.08);border-color:#fff}
+.date-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="grid"></div><canvas id="c"></canvas><div class="vignette"></div>
+<div class="page">
+<div class="title">[ VERIFY ORDER ]</div>
+<div class="form-wrap">
+<form id="verifyForm">
+<label class="label">NAME</label>
+<input class="input" id="name" placeholder="JUAN DELA CRUZ" required>
+<label class="label">PRODUCT</label>
+<input class="input" id="productDisplay" placeholder="TAP TO SELECT PRODUCT..." readonly required>
+<input type="hidden" id="product">
+<label class="label">WHEN</label>
+<input class="input" id="whenDisplay" placeholder="TAP TO SELECT DATE..." readonly required>
+<input type="hidden" id="when">
+<label class="label">EMAIL PROVIDED BY AGENT</label>
+<input class="input" type="email" id="agentEmail" placeholder="email given by agent" required>
+<button class="btn" type="submit">SUBMIT VERIFICATION →</button>
+<div class="note">[ SYSTEM NOTICE ] KINDLY TAKE A SCREENSHOT AFTER SUBMISSION. THIS WILL SERVE AS YOUR WARRANTY PROOF.</div>
+</form>
+<div id="successBox" class="success">
+<b>VERIFIED!</b>
+<div style="font-size:10px;margin-top:12px;color:rgba(255,255,255,.6)">Thanks <span id="sName" style="color:#fff"></span><br><br>
+<div style="border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);padding:10px">
+<div style="font-size:8px;letter-spacing:2px;opacity:.5">TRANSACTION ID</div>
+<div id="txId" style="font-family:'Orbitron';font-size:14px;letter-spacing:2px;color:#fff;margin-top:4px;word-break:break-all"></div>
+</div>
+<br>screenshot this page now, for warranty purposes.<br><br>
+<div style="border:1px dashed rgba(255,255,255,.2);padding:8px;font-size:8px">No screenshot = No warranty. Keep Transaction ID.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PRODUCT PICKER -->
+<div class="picker-overlay" id="pickerOverlay" onclick="if(event.target==this)closePicker()">
+<div class="picker-box">
+<div class="picker-head"><span>SELECT PRODUCT</span><span onclick="closePicker()" style="cursor:pointer;color:rgba(255,255,255,.5)">[X]</span></div>
+<div class="picker-list" id="pickerList"></div>
+</div>
+</div>
+
+<!-- DATE PICKER -->
+<div class="picker-overlay" id="dateOverlay" onclick="if(event.target==this)closeDatePicker()">
+<div class="picker-box">
+<div class="picker-head"><span>SELECT DATE</span><span onclick="closeDatePicker()" style="cursor:pointer;color:rgba(255,255,255,.5)">[X]</span></div>
+<div style="padding:8px">
+<input type="date" id="nativeDate" style="width:100%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);padding:12px;color:#fff;font-family:'JetBrains Mono';font-size:11px;margin-bottom:10px">
+<div class="date-grid" id="quickDates"></div>
+<button class="btn" onclick="confirmDate()">CONFIRM DATE →</button>
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {apiKey:"AIzaSyD9liDmojMs14xIRjMWNCDbG_soMbrhtEQ",authDomain:"premiumhub-ecc89.firebaseapp.com",projectId:"premiumhub-ecc89",storageBucket:"premiumhub-ecc89.firebasestorage.app",messagingSenderId:"382797072107",appId:"1:382797072107:web:e38700898df1c9d9e8a0ae"};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+async function loadProductList(){
+const q=await getDocs(collection(db,"products"));
+let html="";
+q.forEach(function(dc){
+let d=dc.data();
+if(d.dummy)return;
+html+='<div class="picker-item" onclick="chooseProduct(\''+d.name.replace(/'/g,"\\'")+'\')"><span>'+d.name+'</span><span style="opacity:.4">›</span></div>';
+});
+document.getElementById('pickerList').innerHTML=html;
+}
+loadProductList();
+
+window.chooseProduct=function(name){
+document.getElementById('product').value=name;
+document.getElementById('productDisplay').value=name;
+closePicker();
+}
+window.openPicker=function(){document.getElementById('pickerOverlay').style.display='flex';}
+window.closePicker=function(){document.getElementById('pickerOverlay').style.display='none';}
+document.getElementById('productDisplay').addEventListener('click',openPicker);
+
+// DATE PICKER LOGIC - SAME STYLE AS PRODUCT
+function buildQuickDates(){
+  const container=document.getElementById('quickDates');
+  let html="";
+  for(let i=0;i<6;i++){
+    let d=new Date(); d.setDate(d.getDate()-i);
+    let iso=d.toISOString().split('T')[0];
+    let label=i==0?"TODAY":i==1?"YESTERDAY":iso;
+    html+=`<div class="picker-item" onclick="quickPick('${iso}')" style="margin:0"><span>${label}</span></div>`;
+  }
+  container.innerHTML=html;
+  document.getElementById('nativeDate').valueAsDate=new Date();
+}
+window.openDatePicker=function(){ buildQuickDates(); document.getElementById('dateOverlay').style.display='flex';}
+window.closeDatePicker=function(){ document.getElementById('dateOverlay').style.display='none';}
+window.quickPick=function(iso){ document.getElementById('nativeDate').value=iso; }
+window.confirmDate=function(){
+  let val=document.getElementById('nativeDate').value;
+  if(!val) return alert("Pick date");
+  document.getElementById('when').value=val;
+  document.getElementById('whenDisplay').value=val;
+  closeDatePicker();
+}
+document.getElementById('whenDisplay').addEventListener('click',openDatePicker);
+
+document.getElementById('verifyForm').addEventListener('submit', async (e)=>{
+e.preventDefault();
+function genTx(){
+  const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const numbers="0123456789";
+  let L="", N="";
+  for(let i=0;i<6;i++){ L+=letters[Math.floor(Math.random()*letters.length)]; }
+  for(let i=0;i<6;i++){ N+=numbers[Math.floor(Math.random()*numbers.length)]; }
+  return `${L}${N}`;
+}
+let tx = genTx();
+let data={
+name:document.getElementById('name').value.trim(),
+product:document.getElementById('product').value,
+when:document.getElementById('when').value,
+agentEmail:document.getElementById('agentEmail').value.trim(),
+transactionId: tx,
+time:serverTimestamp(),
+status:"PENDING"
+};
+if(!data.product){alert("Select product");return;}
+if(!data.when){alert("Select date");return;}
+try{
+await addDoc(collection(db,"verifications"),data);
+document.getElementById('sName').innerText=data.name;
+document.getElementById('txId').innerText=tx;
+document.getElementById('verifyForm').style.display='none';
+document.getElementById('successBox').style.display='block';
+}catch(err){alert(err.message)}
+});
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let w,h,vDrops=[],hDrops=[];
+function resize(){
+w=canvas.width=innerWidth;h=canvas.height=innerHeight;
+vDrops=[];hDrops=[];
+for(let l=1;l<=3;l++){for(let k=0;k<3;k++){vDrops.push({x:l*60,y:-Math.random()*h-k*300,speed:1.8+Math.random()*1.8,length:90,opacity:.9-l*.18});}}
+for(let l=1;l<=3;l++){for(let k=0;k<3;k++){hDrops.push({y:l*60,x:-Math.random()*400-k*300,speed:2+Math.random()*2,length:110,opacity:.9-l*.18});}}
+}
+addEventListener('resize',resize);resize();
+(function anim(){
+ctx.clearRect(0,0,w,h);
+vDrops.forEach(function(d){
+let g=ctx.createLinearGradient(0,d.y-d.length,0,d.y);
+g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,'+d.opacity+')');
+ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x,d.y-d.length);ctx.lineTo(d.x,d.y);ctx.stroke();
+d.y+=d.speed;if(d.y>h+d.length)d.y=-d.length;
+});
+hDrops.forEach(function(d){
+let g=ctx.createLinearGradient(d.x-d.length,0,d.x,0);
+g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(255,255,255,'+d.opacity+')');
+ctx.strokeStyle=g;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(d.x-d.length,d.y);ctx.lineTo(d.x,d.y);ctx.stroke();
+d.x+=d.speed;if(d.x>w+d.length)d.x=-d.length;
+});
+requestAnimationFrame(anim)
+})();
+</script>
+</body>
+</html>
